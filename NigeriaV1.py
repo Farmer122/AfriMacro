@@ -11,6 +11,7 @@ from scipy.interpolate import interp1d
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import plotly.graph_objs as go
 
 st.set_page_config(page_title="Nigeria's GDP Predictions", layout="wide")
 st.markdown("""
@@ -83,23 +84,69 @@ monthly_predictions = predictions_df.resample('M').mean()
 quarterly_predictions = predictions_df.resample('Q').mean()
 
 prediction_interval = st.sidebar.selectbox("Select Prediction Interval:", ["Weekly", "Monthly", "Quarterly"])
+# Select the prediction interval from the sidebar
+# Prepare the data to plot based on the selected prediction interval
 if prediction_interval == "Weekly":
     data_to_plot = predictions_df.reset_index()
 elif prediction_interval == "Monthly":
     data_to_plot = monthly_predictions.reset_index()
-else:
+else:  # Quarterly
     data_to_plot = quarterly_predictions.reset_index()
 
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.plot(gdp_data['date'], gdp_data['GDP_Current_USD'], label='Actual GDP', color='blue')
-if prediction_interval == "Weekly":
-    ax.plot(data_to_plot['date'], data_to_plot['weekly_gdp_predictions'], label='Predicted Weekly GDP', color='red', linestyle='--')
-elif prediction_interval == "Monthly":
-    ax.plot(data_to_plot['date'], data_to_plot['weekly_gdp_predictions'], label='Predicted Monthly GDP', color='green', linestyle='--')
-else:
-    ax.plot(data_to_plot['date'], data_to_plot['weekly_gdp_predictions'], label='Predicted Quarterly GDP', color='purple', linestyle='--')
-ax.set_title(f"Actual vs Predicted GDP ({prediction_interval})")
-ax.set_xlabel("Date")
-ax.set_ylabel("GDP ($)")
-ax.legend()
-st.pyplot(fig)
+# Initialize a Plotly figure
+fig = go.Figure()
+
+# Add the actual GDP data trace
+fig.add_trace(go.Scatter(x=gdp_data['date'], y=gdp_data['GDP_Current_USD'],
+                         mode='lines', name='Actual GDP',
+                         line=dict(color='blue')))
+
+# Add the predicted GDP data trace based on the selected interval
+fig.add_trace(go.Scatter(x=data_to_plot['date'], y=data_to_plot['weekly_gdp_predictions'],
+                         mode='lines+markers', name=f'Predicted GDP ({prediction_interval})',
+                         line=dict(color='red', dash='dash')))
+
+# Update the layout to customize the appearance
+fig.update_layout(
+    title=f'Actual vs Predicted GDP ({prediction_interval})',
+    xaxis_title='Date',
+    yaxis_title='GDP ($)',
+    template="plotly_dark",
+    plot_bgcolor='rgba(0, 0, 0, 0)',
+    xaxis=dict(
+        showline=True,
+        showgrid=True,
+        gridcolor='grey',
+        linecolor='grey',
+        linewidth=2,
+        ticks='outside',
+        tickfont=dict(
+            family='Arial',
+            size=12,
+            color='white',
+        ),
+    ),
+    yaxis=dict(
+        showline=True,
+        showgrid=True,
+        gridcolor='grey',
+        linecolor='grey',
+        linewidth=2,
+        ticks='outside',
+        tickfont=dict(
+            family='Arial',
+            size=12,
+            color='white',
+        ),
+    ),
+    legend=dict(
+        orientation="h",
+        yanchor="bottom",
+        y=1.02,
+        xanchor="right",
+        x=1
+    )
+)
+
+# Display the Plotly figure in Streamlit
+st.plotly_chart(fig, use_container_width=True)
