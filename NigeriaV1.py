@@ -28,19 +28,14 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-def get_image_from_github_as_base64(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        return base64.b64encode(response.content).decode()
 
 image_url = "https://github.com/Farmer122/AfriMacro/blob/main/CROPPED.png?raw=true"
 
-encoded_image = get_image_from_github_as_base64(image_url)
 
 st.markdown(f"""
     <style>
     [data-testid="stSidebar"] {{
-        background-image: url("data:image/png;base64,{encoded_image}");
+        background-image: url("{image_url}");
         background-size: cover;
         background-position: center;
     }}
