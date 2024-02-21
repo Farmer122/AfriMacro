@@ -29,6 +29,9 @@ st.markdown("""
 countries = ['NGA']
 pycountries = ['NG']
 
+st.title('Nigeria GDP Nowcast')
+st.markdown('This project uses Deep Learning and High Frequency Methods (google trends) to make GDP Nowcasts for Nigeria')
+
 def load_gdp_data(start_year=2019, end_year=2022):
     indicators = {'NY.GDP.MKTP.CD': 'GDP_Current_USD'}
     gdp_data = wbdata.get_dataframe(indicators, country=countries)
