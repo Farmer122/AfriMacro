@@ -1,0 +1,7 @@
+streamlit
+requests
+wbdata
+pytrends
+sklearn
+numpy
+pandas
