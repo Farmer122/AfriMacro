@@ -33,7 +33,7 @@ def get_image_from_github_as_base64(url):
     if response.status_code == 200:
         return base64.b64encode(response.content).decode()
 
-image_url = "https://raw.githubusercontent.com/Farmer122/AfriMacro/edit/main/CROPPED.png"
+image_url = "https://github.com/Farmer122/AfriMacro/blob/main/CROPPED.png?raw=true"
 
 encoded_image = get_image_from_github_as_base64(image_url)
 
