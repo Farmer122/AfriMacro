@@ -13,6 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 import base64
+import requests
 
 st.set_page_config(page_title="Nigeria's GDP Predictions", layout="wide")
 st.markdown("""
@@ -27,19 +28,26 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-image_url = ""
+def get_image_from_github_as_base64(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        return base64.b64encode(response.content).decode()
 
+image_url = "https://raw.githubusercontent.com/Farmer122/AfriMacro/edit/main/CROPPED.png"
+
+encoded_image = get_image_from_github_as_base64(image_url)
 
 st.markdown(f"""
     <style>
     [data-testid="stSidebar"] {{
-        background-image: url({image_url});
+        background-image: url("data:image/png;base64,{encoded_image}");
         background-size: cover;
         background-position: center;
     }}
     /* Other styles */
     </style>
     """, unsafe_allow_html=True)
+
 
 
 countries = ['NGA']
