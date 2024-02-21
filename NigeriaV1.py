@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
+import base64
 
 st.set_page_config(page_title="Nigeria's GDP Predictions", layout="wide")
 st.markdown("""
