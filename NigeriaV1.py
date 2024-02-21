@@ -30,7 +30,7 @@ countries = ['NGA']
 pycountries = ['NG']
 
 st.title('Nigeria GDP Nowcast')
-st.markdown('This project uses Deep Learning and High Frequency Data (google trends) to make GDP Nowcasts for Nigeria')
+st.markdown('This project uses Machine Learning and High Frequency Data (google trends) to make GDP Nowcasts for Nigeria')
 st.markdown('Author: Jamal Lawal')
 
 def load_gdp_data(start_year=2019, end_year=2022):
