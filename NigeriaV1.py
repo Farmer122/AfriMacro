@@ -27,6 +27,21 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+image_url = ""
+
+
+st.markdown(f"""
+    <style>
+    [data-testid="stSidebar"] {{
+        background-image: url({image_url});
+        background-size: cover;
+        background-position: center;
+    }}
+    /* Other styles */
+    </style>
+    """, unsafe_allow_html=True)
+
+
 countries = ['NGA']
 pycountries = ['NG']
 
