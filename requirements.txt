@@ -1,7 +1,7 @@
 streamlit
-requests
-wbdata
-pytrends
-sklearn
-numpy
 pandas
+numpy
+matplotlib
+scikit-learn
+pytrends
+wbdata
