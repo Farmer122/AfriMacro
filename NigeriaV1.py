@@ -18,12 +18,12 @@ st.set_page_config(page_title="Nigeria's GDP Predictions", layout="wide")
 st.markdown("""
     <style>
     .main {
-       background-color: #0E1117;
+       background-color: #010100;
     }
-    .st-cb, .st-bb {background-color: #0E1117;}
-    .st-bb {color: white;}
-    .st-at {color: white;}
-    .css-145kmo2 {color: white;}
+    .st-cb, .st-bb {background-color: #010100;}
+    .st-bb {color: #fafafb;}
+    .st-at {color: #fafafb;}
+    .css-145kmo2 {color: #fafafb;}
     </style>
     """, unsafe_allow_html=True)
 
