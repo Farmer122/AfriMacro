@@ -12,7 +12,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
-import base64
 import requests
 
 st.set_page_config(page_title="Nigeria's GDP Predictions", layout="wide")
@@ -27,22 +26,6 @@ st.markdown("""
     .css-145kmo2 {color: white;}
     </style>
     """, unsafe_allow_html=True)
-
-
-image_url = "https://github.com/Farmer122/AfriMacro/blob/main/CROPPED.png?raw=true"
-
-
-st.markdown(f"""
-    <style>
-    [data-testid="stSidebar"] {{
-        background-image: url("{image_url}");
-        background-size: cover;
-        background-position: center;
-    }}
-    /* Other styles */
-    </style>
-    """, unsafe_allow_html=True)
-
 
 
 countries = ['NGA']
