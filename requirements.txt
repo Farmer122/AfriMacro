@@ -6,5 +6,4 @@ scikit-learn
 pytrends
 wbdata
 plotly
-base64
 requests
