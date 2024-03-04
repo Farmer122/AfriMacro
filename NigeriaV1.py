@@ -44,7 +44,7 @@ def load_gdp_data(start_year=2019, end_year=2022):
     return gdp_data
 
 def fetch_google_trends(keywords, start_date='2019-01-01', end_date=datetime.today().strftime('%Y-%m-%d')):
-    pytrend = TrendReq(timeout=10, proxies=['https://34.203.233.13:80'])
+    pytrend = TrendReq()
     trends_data_combined = pd.DataFrame()
     for country in pycountries:
         for keyword in keywords:
