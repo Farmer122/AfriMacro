@@ -7,3 +7,5 @@ pytrends
 wbdata
 plotly
 requests
+selenium
+time
