@@ -13,6 +13,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 import requests
+from selenium import webdriver
+import time
 
 st.set_page_config(page_title="Nigeria's GDP Predictions", layout="wide")
 st.markdown("""
