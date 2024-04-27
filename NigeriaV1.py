@@ -13,8 +13,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 import requests
-from selenium import webdriver
-import time
 
 st.set_page_config(page_title="Nigeria's GDP Predictions", layout="wide")
 st.markdown("""
@@ -45,22 +43,8 @@ def load_gdp_data(start_year=2019, end_year=2022):
     gdp_data = gdp_data[gdp_data['date'].dt.year.between(start_year, end_year)]
     return gdp_data
 
-
-def get_cookie():
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
-    driver = webdriver.Chrome(options=options)
-    driver.get("https://trends.google.com/")
-    time.sleep(5)
-    cookie = driver.get_cookie("NID")["value"]
-    driver.quit()
-    return cookie
-
-nid_cookie = f"NID={get_cookie()}"
-
-
 def fetch_google_trends(keywords, start_date='2019-01-01', end_date=datetime.today().strftime('%Y-%m-%d')):
-    pytrend = TrendReq(requests_args={"headers": {"Cookie": nid_cookie}})
+    pytrend = TrendReq()
     trends_data_combined = pd.DataFrame()
     for country in pycountries:
         for keyword in keywords:
