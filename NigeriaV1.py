@@ -3,15 +3,15 @@ from pytrends.request import TrendReq
 from datetime import datetime
 import wbdata
 from sklearn.neural_network import MLPRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.svm import SVR
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import mean_squared_error
 from scipy.interpolate import interp1d
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import plotly.graph_objs as go
-import requests
 
 st.set_page_config(page_title="Nigeria's GDP Predictions", layout="wide")
 st.markdown("""
@@ -25,7 +25,6 @@ st.markdown("""
     .css-145kmo2 {color: #fafafb;}
     </style>
     """, unsafe_allow_html=True)
-
 
 countries = ['NGA']
 pycountries = ['NG']
@@ -64,32 +63,87 @@ def preprocess_and_scale_data(trends_data_combined):
     trends_data_combined[numeric_columns] = scaler.fit_transform(trends_data_combined[numeric_columns])
     return trends_data_combined
 
+def create_ensemble_model():
+    models = [
+        ('MLP', MLPRegressor(hidden_layer_sizes=(300, 10), solver="adam", activation="relu", learning_rate_init=0.001, max_iter=10000, random_state=42)),
+        ('RF', RandomForestRegressor(n_estimators=100, random_state=42)),
+        ('GB', GradientBoostingRegressor(n_estimators=100, random_state=42)),
+        ('SVR', SVR(kernel='rbf'))
+    ]
+    return models
+
+def train_ensemble(X, y, models):
+    for name, model in models:
+        model.fit(X, y)
+    return models
+
+def predict_ensemble(X, models):
+    predictions = []
+    for name, model in models:
+        pred = model.predict(X)
+        predictions.append(pred)
+    return np.mean(predictions, axis=0)
+
+# Main code
 keywords = ["Economy", "Recession", "Politics", "Unemployment", "Loan", "Interest", "Inflation", "Fintech", "Mobile Payments", "Bitcoin", "News", "JAPA", "Visa"]
 gdp_data = load_gdp_data()
 trends_data_combined = fetch_google_trends(keywords)
 trends_data_preprocessed = preprocess_and_scale_data(trends_data_combined)
+
 gdp_data.sort_values('date', inplace=True)
 gdp_dates = pd.to_datetime(gdp_data['date']).map(datetime.toordinal)
 gdp_values = gdp_data['GDP_Current_USD'].values
 cubic_spline = interp1d(gdp_dates, gdp_values, kind='cubic', bounds_error=False, fill_value="extrapolate")
 trends_dates_up_to_2022 = pd.to_datetime(trends_data_preprocessed['date']).map(datetime.toordinal)
 trends_data_preprocessed['weekly_gdp'] = cubic_spline(trends_dates_up_to_2022)
-trends_data_train = trends_data_preprocessed[trends_data_preprocessed['date'].dt.year <= 2022].copy()
-X_train = trends_data_train.drop(columns=['date'] + keywords)
-X_train[keywords] = trends_data_train[keywords]
-y_train = trends_data_train['weekly_gdp']
-network = MLPRegressor(hidden_layer_sizes=(300, 10), solver="adam", activation="relu", learning_rate_init=0.001, tol=1e-4, max_iter=10000, random_state=0)
-network.fit(X_train, y_train)
-X_all = trends_data_preprocessed.drop(columns=['date'] + keywords)
-X_all[keywords] = trends_data_preprocessed[keywords]
-y_pred_all = network.predict(X_all)
-predictions_df = pd.DataFrame({'date': trends_data_preprocessed['date'], 'weekly_gdp_predictions': y_pred_all})
+
+# Prepare data for ensemble
+X = trends_data_preprocessed.drop(columns=['date', 'weekly_gdp'] + keywords)
+X[keywords] = trends_data_preprocessed[keywords]
+y = trends_data_preprocessed['weekly_gdp']
+
+# Scale the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Create and train the ensemble
+models = create_ensemble_model()
+trained_models = train_ensemble(X_scaled, y, models)
+
+# Make predictions using the ensemble
+ensemble_predictions = predict_ensemble(X_scaled, trained_models)
+
+# Create predictions dataframe
+predictions_df = pd.DataFrame({
+    'date': trends_data_preprocessed['date'],
+    'weekly_gdp_predictions': ensemble_predictions
+})
 predictions_df.set_index('date', inplace=True)
+
+# Resample to monthly and quarterly predictions
 monthly_predictions = predictions_df.resample('M').mean()
 quarterly_predictions = predictions_df.resample('Q').mean()
 
+# Evaluate the ensemble model using time series cross-validation
+tscv = TimeSeriesSplit(n_splits=5)
+mse_scores = []
+
+for train_index, test_index in tscv.split(X_scaled):
+    X_train, X_test = X_scaled[train_index], X_scaled[test_index]
+    y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+    
+    trained_models = train_ensemble(X_train, y_train, models)
+    ensemble_pred = predict_ensemble(X_test, trained_models)
+    
+    mse = mean_squared_error(y_test, ensemble_pred)
+    mse_scores.append(mse)
+
+average_mse = np.mean(mse_scores)
+st.write(f"Average MSE across folds: {average_mse}")
+
+# Streamlit UI components
 prediction_interval = st.sidebar.selectbox("Select Prediction Interval:", ["Weekly", "Monthly", "Quarterly"])
-# Select the prediction interval from the sidebar
+
 # Prepare the data to plot based on the selected prediction interval
 if prediction_interval == "Weekly":
     data_to_plot = predictions_df.reset_index()
@@ -108,12 +162,12 @@ fig.add_trace(go.Scatter(x=gdp_data['date'], y=gdp_data['GDP_Current_USD'],
 
 # Add the predicted GDP data trace based on the selected interval
 fig.add_trace(go.Scatter(x=data_to_plot['date'], y=data_to_plot['weekly_gdp_predictions'],
-                         mode='lines+markers', name=f'Predicted GDP ({prediction_interval})',
+                         mode='lines+markers', name=f'Ensemble Predicted GDP ({prediction_interval})',
                          line=dict(color='red', dash='dash')))
 
 # Update the layout to customize the appearance
 fig.update_layout(
-    title=f'Actual vs Predicted GDP ({prediction_interval})',
+    title=f'Actual vs Ensemble Predicted GDP ({prediction_interval})',
     xaxis_title='Date',
     yaxis_title='GDP ($)',
     template="plotly_dark",
