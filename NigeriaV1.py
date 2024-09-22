@@ -29,7 +29,7 @@ st.markdown("""
 countries = ['NGA']
 pycountries = ['NG']
 
-st.title('123 GDP Nowcast')
+st.title('Nigeria GDP Nowcast')
 st.markdown('This project uses Machine Learning and High Frequency Data (google trends) to make GDP Nowcasts for Nigeria')
 st.markdown('Author: Jamal Lawal')
 
