@@ -85,7 +85,7 @@ def predict_ensemble(X, models):
     return np.mean(predictions, axis=0)
 
 # Main code
-keywords = ["ticket", "economics", "fuel", "land", "market", "job", "Loan", "credit", "price", "payment", "Bitcoin", "News", "japa", "visa"]
+keywords = ["economics", "fuel", "land", "market", "job", "Loan", "credit", "price", "payment", "Bitcoin", "japa", "visa"]
 gdp_data = load_gdp_data()
 trends_data_combined = fetch_google_trends(keywords)
 trends_data_preprocessed = preprocess_and_scale_data(trends_data_combined)
