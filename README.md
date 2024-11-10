@@ -24,7 +24,7 @@ AfriMacro aims to use Alternative Data (Satellite, Google Trends, News etc) to p
 To install AfriMacro, clone the repository and install the necessary dependencies:
 
 ```bash
-git clone https://github.com/yourusername/AfriMacro.git
+git clone https://github.com/Farmer122/AfriMacro.git
 cd AfriMacro
 pip install -r requirements.txt
 ```
