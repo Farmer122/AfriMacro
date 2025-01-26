@@ -6,7 +6,7 @@ import pandas as pd
 countries = ['NGA']
 pycountries = ['NG']
 
-def load_gdp_data(start_year=2019, end_year=2022):
+def load_gdp_data(start_year=2019, end_year=2023):
     indicators = {'NY.GDP.MKTP.CD': 'GDP_Current_USD'}
     gdp_data = wbdata.get_dataframe(indicators, country=countries)
     gdp_data.reset_index(inplace=True)
