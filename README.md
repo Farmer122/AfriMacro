@@ -26,7 +26,7 @@ To install AfriMacro, clone the repository and install the necessary dependencie
 ```bash
 git clone https://github.com/Farmer122/AfriMacro.git
 cd AfriMacro
-pip install -r requirements.txt
+conda activate afrimacro
 ```
 
 ## Author
