@@ -3,7 +3,8 @@ from datetime import datetime
 import wbdata
 import pandas as pd
 
-
+countries = ['NGA']
+pycountries = ['NG']
 
 def load_gdp_data(start_year=2019, end_year=2022):
     indicators = {'NY.GDP.MKTP.CD': 'GDP_Current_USD'}
