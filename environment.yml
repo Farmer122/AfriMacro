@@ -1,0 +1,15 @@
+name: afrimacro
+channels:
+  - defaults
+dependencies:
+  - selenium
+  - numpy
+  - streamlit
+  - pandas
+  - matplotlib
+  - plotly
+  - requests
+  - scikit-learn
+  - pip:
+      - wbdata
+      - pytrends
