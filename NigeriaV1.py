@@ -31,8 +31,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-countries = ['NGA']
-pycountries = ['NG']
 
 st.title('Nigeria GDP Nowcast')
 st.markdown('This project uses Machine Learning and High Frequency Data (Google Trends) to make GDP Nowcasts for Nigeria')
